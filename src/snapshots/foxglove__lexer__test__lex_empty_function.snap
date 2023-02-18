@@ -1,0 +1,39 @@
+---
+source: src/lexer.rs
+description: "fn|| {}"
+expression: tokens
+---
+Some(
+    [
+        (
+            Keyword(
+                Fn,
+            ),
+            0..2,
+        ),
+        (
+            Control(
+                Pipe,
+            ),
+            2..3,
+        ),
+        (
+            Control(
+                Pipe,
+            ),
+            3..4,
+        ),
+        (
+            Control(
+                OpenCurlyBrace,
+            ),
+            5..6,
+        ),
+        (
+            Control(
+                CloseCurlyBrace,
+            ),
+            6..7,
+        ),
+    ],
+)

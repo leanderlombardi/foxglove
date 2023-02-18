@@ -1,0 +1,18 @@
+[package]
+name = "foxglove"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ariadne = "0.1.5"
+chumsky = "0.9.0"
+clap = { version = "4.1.4", features = ["derive"] }
+
+[dev-dependencies]
+insta = "1.28.0"
+
+[profile.dev.package.insta]
+opt-level = 3
+
+[profile.dev.package.similar]
+opt-level = 3

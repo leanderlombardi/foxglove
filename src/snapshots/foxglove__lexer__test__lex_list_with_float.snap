@@ -1,0 +1,51 @@
+---
+source: src/lexer.rs
+description: "[1, 2.0, 3]"
+expression: tokens
+---
+Some(
+    [
+        (
+            Control(
+                OpenSquareBracket,
+            ),
+            0..1,
+        ),
+        (
+            Int(
+                "1",
+            ),
+            1..2,
+        ),
+        (
+            Control(
+                Comma,
+            ),
+            2..3,
+        ),
+        (
+            Float(
+                "2.0",
+            ),
+            4..7,
+        ),
+        (
+            Control(
+                Comma,
+            ),
+            7..8,
+        ),
+        (
+            Int(
+                "3",
+            ),
+            9..10,
+        ),
+        (
+            Control(
+                CloseSquareBracket,
+            ),
+            10..11,
+        ),
+    ],
+)

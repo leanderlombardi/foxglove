@@ -1,0 +1,15 @@
+---
+source: src/lexer.rs
+description: ":"
+expression: tokens
+---
+Some(
+    [
+        (
+            Control(
+                Colon,
+            ),
+            0..1,
+        ),
+    ],
+)

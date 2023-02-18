@@ -1,0 +1,45 @@
+---
+source: src/lexer.rs
+description: "{ 1; 2; }"
+expression: tokens
+---
+Some(
+    [
+        (
+            Control(
+                OpenCurlyBrace,
+            ),
+            0..1,
+        ),
+        (
+            Int(
+                "1",
+            ),
+            2..3,
+        ),
+        (
+            Control(
+                Semicolon,
+            ),
+            3..4,
+        ),
+        (
+            Int(
+                "2",
+            ),
+            5..6,
+        ),
+        (
+            Control(
+                Semicolon,
+            ),
+            6..7,
+        ),
+        (
+            Control(
+                CloseCurlyBrace,
+            ),
+            8..9,
+        ),
+    ],
+)

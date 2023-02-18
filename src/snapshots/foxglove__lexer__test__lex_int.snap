@@ -1,0 +1,15 @@
+---
+source: src/lexer.rs
+description: "123"
+expression: tokens
+---
+Some(
+    [
+        (
+            Int(
+                "123",
+            ),
+            0..3,
+        ),
+    ],
+)

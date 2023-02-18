@@ -1,0 +1,21 @@
+---
+source: src/lexer.rs
+description: "{}"
+expression: tokens
+---
+Some(
+    [
+        (
+            Control(
+                OpenCurlyBrace,
+            ),
+            0..1,
+        ),
+        (
+            Control(
+                CloseCurlyBrace,
+            ),
+            1..2,
+        ),
+    ],
+)

@@ -1,0 +1,15 @@
+---
+source: src/lexer.rs
+description: "123.456"
+expression: tokens
+---
+Some(
+    [
+        (
+            Float(
+                "123.456",
+            ),
+            0..7,
+        ),
+    ],
+)

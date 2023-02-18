@@ -1,0 +1,21 @@
+---
+source: src/lexer.rs
+description: "||>"
+expression: tokens
+---
+Some(
+    [
+        (
+            Control(
+                Pipe,
+            ),
+            0..1,
+        ),
+        (
+            Control(
+                PipeArrow,
+            ),
+            1..3,
+        ),
+    ],
+)

@@ -1,0 +1,21 @@
+---
+source: src/lexer.rs
+description: "[]"
+expression: tokens
+---
+Some(
+    [
+        (
+            Control(
+                OpenSquareBracket,
+            ),
+            0..1,
+        ),
+        (
+            Control(
+                CloseSquareBracket,
+            ),
+            1..2,
+        ),
+    ],
+)

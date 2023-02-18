@@ -1,0 +1,6 @@
+---
+source: src/lexer.rs
+description: "fn|a, b| { a + b; }"
+expression: lex_errs
+---
+[]

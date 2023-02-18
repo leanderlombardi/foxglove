@@ -1,0 +1,57 @@
+---
+source: src/lexer.rs
+description: "( ) [ ] { } , ;"
+expression: tokens
+---
+Some(
+    [
+        (
+            Control(
+                OpenParen,
+            ),
+            0..1,
+        ),
+        (
+            Control(
+                CloseParen,
+            ),
+            2..3,
+        ),
+        (
+            Control(
+                OpenSquareBracket,
+            ),
+            4..5,
+        ),
+        (
+            Control(
+                CloseSquareBracket,
+            ),
+            6..7,
+        ),
+        (
+            Control(
+                OpenCurlyBrace,
+            ),
+            8..9,
+        ),
+        (
+            Control(
+                CloseCurlyBrace,
+            ),
+            10..11,
+        ),
+        (
+            Control(
+                Comma,
+            ),
+            12..13,
+        ),
+        (
+            Control(
+                Semicolon,
+            ),
+            14..15,
+        ),
+    ],
+)
