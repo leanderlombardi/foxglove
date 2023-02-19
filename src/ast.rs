@@ -24,6 +24,7 @@ pub enum Statement {
     While(Spanned<Expr>, Box<Spanned<Statement>>),
     Break,
     Continue,
+    Loop(Box<Spanned<Statement>>),
 }
 
 #[derive(Debug, Clone, PartialEq)]

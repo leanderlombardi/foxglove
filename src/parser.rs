@@ -198,6 +198,11 @@ fn statement_parser() -> impl Parser<Token, Spanned<Statement>, Error = Simple<T
             .map_with_span(|(expr, block), span| (Statement::While(expr, Box::new(block)), span))
             .boxed();
 
+        let loop_ = just(Token::Keyword(Keyword::Loop))
+            .ignore_then(block.clone())
+            .map_with_span(|block, span| (Statement::Loop(Box::new(block)), span))
+            .boxed();
+
         choice((
             block,
             if_else,
@@ -210,6 +215,7 @@ fn statement_parser() -> impl Parser<Token, Spanned<Statement>, Error = Simple<T
             continue_,
             for_,
             while_,
+            loop_,
         ))
     })
 }

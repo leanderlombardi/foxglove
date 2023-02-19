@@ -44,6 +44,7 @@ pub fn lexer() -> impl Parser<char, Vec<Spanned<Token>>, Error = Simple<char>> {
             "in" => Token::Keyword(Keyword::In),
             "break" => Token::Keyword(Keyword::Break),
             "continue" => Token::Keyword(Keyword::Continue),
+            "loop" => Token::Keyword(Keyword::Loop),
             _ => Token::Ident(ident),
         })
         .boxed();
@@ -131,6 +132,7 @@ pub enum Keyword {
     In,
     Break,
     Continue,
+    Loop,
 }
 
 impl std::fmt::Display for Keyword {
@@ -146,6 +148,7 @@ impl std::fmt::Display for Keyword {
             Keyword::In => write!(f, "in"),
             Keyword::Break => write!(f, "break"),
             Keyword::Continue => write!(f, "continue"),
+            Keyword::Loop => write!(f, "loop"),
         }
     }
 }
