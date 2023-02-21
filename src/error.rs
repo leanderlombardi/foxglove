@@ -1,5 +1,5 @@
 use crate::Span;
-use ariadne::{Color, Fmt};
+use ariadne::{Color, Fmt, Span as _};
 use chumsky::error::SimpleReason;
 use chumsky::prelude::Simple;
 
@@ -119,14 +119,14 @@ impl ErrorReport {
     pub fn offset(&self) -> usize {
         self.errors
             .iter()
-            .map(|e| e.span().start)
+            .map(|e| e.span().start())
             .min()
             .unwrap_or(0)
     }
 }
 
-impl From<Simple<String>> for ErrorReport {
-    fn from(e: Simple<String>) -> Self {
+impl From<Simple<String, Span>> for ErrorReport {
+    fn from(e: Simple<String, Span>) -> Self {
         match e.reason() {
             SimpleReason::Custom(msg) => Self::custom(e.span(), msg),
             SimpleReason::Unexpected => Self::unexpected(

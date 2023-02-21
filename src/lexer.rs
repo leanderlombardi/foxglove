@@ -1,7 +1,9 @@
-use crate::Spanned;
+use crate::Span;
 use chumsky::prelude::*;
 
-pub fn lexer() -> impl Parser<char, Vec<Spanned<Token>>, Error = Simple<char>> {
+type Spanned<T> = (T, Span);
+
+pub fn lexer() -> impl Parser<char, Vec<Spanned<Token>>, Error = Simple<char, Span>> {
     let int = text::int(10)
         .validate(|s: String, span, emit| {
             if s.parse::<i64>().is_err() {

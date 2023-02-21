@@ -1,83 +1,173 @@
-use crate::Spanned;
-
-pub type Ast = Spanned<Vec<Spanned<Statement>>>;
+use crate::Span;
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Statement {
-    Error,
-    Block(Spanned<Vec<Spanned<Self>>>),
-    Expr(Spanned<Expr>),
-    VarAssign(Spanned<AssignmentTarget>, Spanned<Expr>),
-    VarDeclare(Spanned<Ident>, Option<Spanned<Type>>, Spanned<Expr>),
-    Function {
-        name: Spanned<Ident>,
-        args: Spanned<Vec<(Spanned<Ident>, Spanned<Type>)>>,
-        returns: Spanned<Type>,
-        body: Box<Spanned<Statement>>,
-    },
-    Return(Option<Spanned<Expr>>),
-    For(Spanned<Ident>, Spanned<Expr>, Box<Spanned<Statement>>),
+pub struct NodeId(pub usize);
+
+impl From<usize> for NodeId {
+    fn from(id: usize) -> Self {
+        NodeId(id)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Ast {
+    pub id: NodeId,
+    pub span: Span,
+    pub items: Vec<Item>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Item {
+    pub id: NodeId,
+    pub span: Span,
+    pub kind: ItemKind,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum ItemKind {
+    Fn(Function),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Function {
+    pub id: NodeId,
+    pub span: Span,
+    pub sig: FunctionSignature,
+    pub body: Statement,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct FunctionSignature {
+    pub id: NodeId,
+    pub span: Span,
+    pub name: Ident,
+    pub params: Vec<Param>,
+    pub ret_ty: Type,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Param {
+    pub id: NodeId,
+    pub span: Span,
+    pub name: Ident,
+    pub ty: Type,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Statement {
+    pub id: NodeId,
+    pub span: Span,
+    pub kind: StatementKind,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum StatementKind {
+    Block(Vec<Statement>),
+    Expr(Expr),
+    VarDecl(Ident, Option<Type>, Expr),
+    Assign(AssignmentTarget, Expr),
+    Return(Option<Expr>),
     IfElse {
-        if_: (Spanned<Expr>, Box<Spanned<Statement>>),
-        else_: Option<Box<Spanned<Statement>>>,
+        cond: Expr,
+        then: Box<Statement>,
+        else_: Option<Box<Statement>>,
     },
-    While(Spanned<Expr>, Box<Spanned<Statement>>),
+    While {
+        cond: Expr,
+        stmt: Box<Statement>,
+    },
+    For {
+        var: Ident,
+        in_: Expr,
+        stmt: Box<Statement>,
+    },
     Break,
     Continue,
-    Loop(Box<Spanned<Statement>>),
+    Loop(Box<Statement>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Expr {
+pub struct Expr {
+    pub id: NodeId,
+    pub span: Span,
+    pub kind: ExprKind,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum ExprKind {
     Error,
-    Var(Spanned<Ident>),
-    Value(Box<Spanned<Value>>),
-    Postfix(Box<Spanned<Self>>, Box<Spanned<PostfixOperator>>),
-    Unary(Spanned<UnaryOperator>, Box<Spanned<Self>>),
-    Binary(
-        Box<Spanned<Self>>,
-        Spanned<BinaryOperator>,
-        Box<Spanned<Self>>,
-    ),
+    Literal(Literal),
+    Var(Ident),
+    List(Vec<Expr>),
+    Binary {
+        lhs: Box<Expr>,
+        op: BinaryOp,
+        rhs: Box<Expr>,
+    },
+    Prefix {
+        op: PrefixOp,
+        expr: Box<Expr>,
+    },
+    Postfix {
+        expr: Box<Expr>,
+        op: PostfixOp,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum AssignmentTarget {
+pub struct AssignmentTarget {
+    pub id: NodeId,
+    pub span: Span,
+    pub kind: AssignmentTargetKind,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum AssignmentTargetKind {
     Error,
-    Var(Spanned<Ident>),
-    Index(Spanned<Ident>, Spanned<Expr>),
+    Var(Ident),
+    Index(Box<AssignmentTarget>, Box<Expr>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Type {
-    Unit,
-    Ident(Spanned<Ident>),
-    List(Box<Spanned<Self>>),
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum Value {
+pub enum Literal {
     Int(i64),
     Float(f64),
     Bool(bool),
-    List(Spanned<Vec<Spanned<Expr>>>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum PostfixOperator {
-    Error,
-    Call(Spanned<Vec<Spanned<Expr>>>),
-    Index(Spanned<Expr>),
+pub struct Ident {
+    pub id: NodeId,
+    pub span: Span,
+    pub name: String,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum UnaryOperator {
-    Pos,
-    Neg,
+pub struct Type {
+    pub id: NodeId,
+    pub span: Span,
+    pub kind: TypeKind,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum BinaryOperator {
+pub enum TypeKind {
+    Unit,
+    Ident(Ident),
+    Int,
+    Float,
+    Bool,
+    List(Box<Type>),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct BinaryOp {
+    pub id: NodeId,
+    pub span: Span,
+    pub kind: BinaryOpKind,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum BinaryOpKind {
     Add,
     Sub,
     Mul,
@@ -91,4 +181,29 @@ pub enum BinaryOperator {
     Gte,
 }
 
-pub type Ident = String;
+#[derive(Debug, Clone, PartialEq)]
+pub struct PrefixOp {
+    pub id: NodeId,
+    pub span: Span,
+    pub kind: PrefixOpKind,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum PrefixOpKind {
+    Pos,
+    Neg,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct PostfixOp {
+    pub id: NodeId,
+    pub span: Span,
+    pub kind: PostfixOpKind,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum PostfixOpKind {
+    Error,
+    Call(Vec<Expr>),
+    Index(Box<Expr>),
+}

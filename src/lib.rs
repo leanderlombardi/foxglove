@@ -11,6 +11,7 @@
 use crate::error::ErrorReport;
 use ariadne::{Label, Report, ReportKind, Source};
 use chumsky::{Parser as _, Stream};
+use parser::Parser;
 use std::path::PathBuf;
 
 mod ast;
@@ -33,9 +34,12 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
 
     let (ast, parse_errs) = if lex_errs.is_empty() {
         if let Some(tokens) = tokens {
+            let parser = Parser::new();
+            let parser = parser.parser();
+
             let len = input.chars().count();
 
-            parser::parser().parse_recovery(Stream::from_iter(len..len + 1, tokens.into_iter()))
+            parser.parse_recovery(Stream::from_iter(len..len + 1, tokens.into_iter()))
         } else {
             (None, Vec::new())
         }
@@ -90,11 +94,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
     Err("compilation failed".into())
 }
 
-/// The main span type used throughout the compiler.
 pub type Span = std::ops::Range<usize>;
-
-/// A type `T` with a span.
-pub type Spanned<T> = (T, Span);
 
 /// The configuration for the compiler. It is used to pass
 /// information from the command line to the compiler.
