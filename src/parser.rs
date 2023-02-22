@@ -496,7 +496,17 @@ impl Parser {
                         just(Token::Control(Control::PipeArrow)),
                     ),
             )
-            .then(self.type_parser())
+            .then(self.type_parser().or_not().map_with_span(|ty, span| {
+                if let Some(ty) = ty {
+                    ty
+                } else {
+                    Type {
+                        id: self.next_id(),
+                        span,
+                        kind: TypeKind::Unit,
+                    }
+                }
+            }))
             .map_with_span(|((name, params), ret_ty), span| FunctionSignature {
                 id: self.next_id(),
                 span,
