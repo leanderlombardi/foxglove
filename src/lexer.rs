@@ -1,7 +1,7 @@
 use crate::Span;
 use chumsky::prelude::*;
 
-type Spanned<T> = (T, Span);
+pub type Spanned<T> = (T, Span);
 
 pub fn lexer() -> impl Parser<char, Vec<Spanned<Token>>, Error = Simple<char, Span>> {
     let int = text::int(10)
