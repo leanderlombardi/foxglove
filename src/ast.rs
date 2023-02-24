@@ -117,7 +117,6 @@ pub struct AssignmentTarget {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum AssignmentTargetKind {
-    Error,
     Var(Ident),
     Index(Box<AssignmentTarget>, Box<Expr>),
 }

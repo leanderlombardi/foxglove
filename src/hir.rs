@@ -287,7 +287,6 @@ impl Lowerer {
 
     fn lower_assignment_target(&self, target: &ast::AssignmentTarget) -> AssignmentTarget {
         let kind = match &target.kind {
-            ast::AssignmentTargetKind::Error => unreachable!(),
             ast::AssignmentTargetKind::Var(i) => AssignmentTargetKind::Var(self.lower_ident(i)),
             ast::AssignmentTargetKind::Index(target, expr) => {
                 let target = self.lower_assignment_target(target);

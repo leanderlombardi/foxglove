@@ -605,14 +605,12 @@ impl Parser {
             })
             .boxed();
 
-        let index = ident_assignment
-            .clone()
-            .map(Box::new)
-            .then(self.expr_parser().map(Box::new).delimited_by(
+        let index = self
+            .expr_parser()
+            .delimited_by(
                 just(Token::Control(Control::OpenSquareBracket)),
                 just(Token::Control(Control::CloseSquareBracket)),
-            ))
-            .map(|(target, expr)| AssignmentTargetKind::Index(target, expr))
+            )
             .recover_with(nested_delimiters(
                 Token::Control(Control::OpenSquareBracket),
                 Token::Control(Control::CloseSquareBracket),
@@ -626,15 +624,25 @@ impl Parser {
                         Token::Control(Control::CloseCurlyBrace),
                     ),
                 ],
-                |_| AssignmentTargetKind::Error,
+                |span| Expr {
+                    id: self.next_id(),
+                    span,
+                    kind: ExprKind::Error,
+                },
             ))
-            .map_with_span(|kind, span| AssignmentTarget {
-                id: self.next_id(),
-                span,
-                kind,
-            })
             .boxed();
 
-        choice((index, ident_assignment)).boxed()
+        ident_assignment
+            .then(index.repeated())
+            .foldl(|lhs, rhs| {
+                let span = lhs.span.start..rhs.span.end;
+
+                AssignmentTarget {
+                    id: self.next_id(),
+                    span,
+                    kind: AssignmentTargetKind::Index(Box::new(lhs), Box::new(rhs)),
+                }
+            })
+            .boxed()
     }
 }
