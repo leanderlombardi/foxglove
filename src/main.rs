@@ -19,6 +19,8 @@ fn main() {
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
+#[command(arg_required_else_help(true))]
+/// Compiler for the foxglove programming language
 struct Args {
     filename: PathBuf,
 
@@ -27,10 +29,13 @@ struct Args {
 
     #[clap(short, long)]
     ast: bool,
+
+    #[clap(short = 'H', long)]
+    hir: bool,
 }
 
 impl From<Args> for Config {
     fn from(args: Args) -> Self {
-        Self::new(args.filename, args.tokens, args.ast)
+        Self::new(args.filename, args.tokens, args.ast, args.hir)
     }
 }

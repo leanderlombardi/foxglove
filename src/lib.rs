@@ -10,12 +10,12 @@
 
 use crate::error::ErrorReport;
 use ariadne::{Label, Report, ReportKind, Source};
-use chumsky::{Parser as _, Stream};
-use parser::Parser;
+use chumsky::Parser as _;
 use std::path::PathBuf;
 
 mod ast;
 mod error;
+mod hir;
 mod lexer;
 mod parser;
 
@@ -34,12 +34,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
 
     let (ast, parse_errs) = if lex_errs.is_empty() {
         if let Some(tokens) = tokens {
-            let parser = Parser::new();
-            let parser = parser.parser();
-
-            let len = input.chars().count();
-
-            parser.parse_recovery(Stream::from_iter(len..len + 1, tokens.into_iter()))
+            parser::parse(tokens, input.chars().count())
         } else {
             (None, Vec::new())
         }
@@ -51,9 +46,19 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
         dbg!(&ast);
     }
 
-    if lex_errs.is_empty() && parse_errs.is_empty() {
-        todo!()
+    let (hir, lower_errs) = if parse_errs.is_empty() {
+        if let Some(ast) = ast {
+            hir::lower(&ast)
+        } else {
+            (None, Vec::new())
+        }
+    } else {
+        (None, Vec::new())
     };
+
+    if config.debug_hir {
+        dbg!(&hir);
+    }
 
     Vec::new()
         .into_iter()
@@ -69,6 +74,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
                 .map(|e| e.map(|tok| tok.to_string()))
                 .map(Into::into),
         )
+        .chain(lower_errs.into_iter())
         .for_each(|e: ErrorReport| {
             let mut report = Report::build(ReportKind::Error, (), e.offset())
                 .with_code(e.code().0.clone())
@@ -103,15 +109,17 @@ pub struct Config {
     filename: PathBuf,
     debug_tokens: bool,
     debug_ast: bool,
+    debug_hir: bool,
 }
 
 impl Config {
     /// Creates a new `Config` from a filename.
-    pub fn new(filename: PathBuf, debug_tokens: bool, debug_ast: bool) -> Self {
+    pub fn new(filename: PathBuf, debug_tokens: bool, debug_ast: bool, debug_hir: bool) -> Self {
         Self {
             filename,
             debug_tokens,
             debug_ast,
+            debug_hir,
         }
     }
 }

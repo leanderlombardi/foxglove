@@ -1,13 +1,19 @@
-use std::cell::RefCell;
-
 use crate::ast::{
     AssignmentTarget, AssignmentTargetKind, Ast, BinaryOp, BinaryOpKind, Expr, ExprKind, Function,
     FunctionSignature, Ident, Item, ItemKind, Literal, NodeId, Param, PostfixOp, PostfixOpKind,
     PrefixOp, PrefixOpKind, Statement, StatementKind, Type, TypeKind,
 };
-use crate::lexer::{Control, Keyword, Operator, Token};
-use chumsky::prelude::*;
+use crate::lexer::{Control, Keyword, Operator, Spanned, Token};
 use chumsky::Parser as ChumskyParser;
+use chumsky::{prelude::*, Stream};
+use std::cell::RefCell;
+
+pub fn parse(tokens: Vec<Spanned<Token>>, len: usize) -> (Option<Ast>, Vec<Simple<Token>>) {
+    let parser = Parser::new();
+    let parser = parser.parser();
+
+    parser.parse_recovery(Stream::from_iter(len..len + 1, tokens.into_iter()))
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Parser {
