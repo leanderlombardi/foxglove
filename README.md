@@ -4,7 +4,7 @@
 fn sort |a: [int], n: int|> {
     for i in 1..n {
         for j in 1..n {
-            if (a[i] < a[j]) {
+            if a[i] < a[j] {
                 var t = a[i];
 
                 a[i] = a[j];
