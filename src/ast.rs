@@ -3,12 +3,6 @@ use crate::Span;
 #[derive(Debug, Clone, PartialEq)]
 pub struct NodeId(pub usize);
 
-impl From<usize> for NodeId {
-    fn from(id: usize) -> Self {
-        NodeId(id)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct Ast {
     pub id: NodeId,
