@@ -1,5 +1,16 @@
-# foxglove
+### foxglove
+Programming language made by [skycloudd](https://github.com/skycloudd/)
+***
 
+## Examples
+**Print math expression**
+```dart
+fn main ||> int {
+    print(35+55);
+    return 0;
+}
+```
+**Sort function**
 ```dart
 fn sort |a: [int], n: int|> {
     for i in 1..n {
